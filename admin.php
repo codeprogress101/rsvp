@@ -8,6 +8,7 @@ session_start();
    Change this password!
 ========================= */
 $ADMIN_PASSWORD = "keem_kate";
+$ADMIN_API_KEY = "superadmin123";
 
 /* ===== Handle logout ===== */
 if (isset($_GET["logout"])) {
@@ -246,6 +247,25 @@ $qs = $_GET;
 unset($qs["logout"]);
 $query_string = http_build_query($qs);
 $csv_link = "export_csv.php" . ($query_string ? ("?" . $query_string) : "");
+
+/* ===== Guestbook Messages ===== */
+$messages_path = __DIR__ . "/data/messages.json";
+$guestbook_messages = [];
+if (file_exists($messages_path)) {
+  $raw_messages = file_get_contents($messages_path);
+  $decoded_messages = json_decode($raw_messages, true);
+  if (is_array($decoded_messages)) $guestbook_messages = $decoded_messages;
+}
+usort($guestbook_messages, function($a, $b){
+  return ($b["time"] ?? 0) <=> ($a["time"] ?? 0);
+});
+$guestbook_total = count($guestbook_messages);
+
+function truncate_message($message, $limit = 120) {
+  $message = (string)$message;
+  if (mb_strlen($message) <= $limit) return $message;
+  return rtrim(mb_substr($message, 0, $limit - 1)) . "…";
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -276,6 +296,13 @@ $csv_link = "export_csv.php" . ($query_string ? ("?" . $query_string) : "");
     .counts{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
     .countbox{background:rgba(255,255,255,.65);border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:10px 12px;font-size:14px}
     .muted{opacity:.7}
+    .panel + .panel{margin-top:20px}
+    .panel__title{margin:0 0 10px;font-size:18px;letter-spacing:.08em;text-transform:uppercase}
+    .table-message{max-width:420px;white-space:normal;word-break:break-word}
+    .table-meta{font-size:12px;opacity:.75}
+    .status{margin-top:10px;font-size:13px}
+    .status.is-ok{color:rgba(20,80,30,.9)}
+    .status.is-error{color:rgba(120,20,20,.9)}
     @media (max-width:640px){
       input,select{min-width:0;flex:1}
       th:nth-child(4), td:nth-child(4),
@@ -349,6 +376,115 @@ $csv_link = "export_csv.php" . ($query_string ? ("?" . $query_string) : "");
         </tbody>
       </table>
     </div>
+  <div class="panel">
+      <h2 class="panel__title">Guestbook Notes (Admin) <span class="meta">(Total: <span data-guestbook-count><?php echo $guestbook_total; ?></span>)</span></h2>
+      <div class="meta">Delete messages from the public guestbook feed.</div>
+
+      <table data-guestbook-table>
+        <thead>
+          <tr>
+            <th style="width:140px;">Name</th>
+            <th>Message</th>
+            <th style="width:120px;">Anonymous</th>
+            <th style="width:200px;">Submitted</th>
+            <th style="width:110px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (empty($guestbook_messages)): ?>
+            <tr>
+              <td colspan="5" class="muted">No guestbook messages yet.</td>
+            </tr>
+          <?php else: ?>
+            <?php foreach ($guestbook_messages as $message): ?>
+              <tr>
+                <td><?php echo htmlspecialchars($message["name"] ?: "Anonymous"); ?></td>
+                <td class="table-message"><?php echo htmlspecialchars(truncate_message($message["message"] ?? "")); ?></td>
+                <td class="table-meta"><?php echo !empty($message["anonymous"]) ? "Yes" : "No"; ?></td>
+                <td class="table-meta">
+                  <?php
+                    $time = isset($message["time"]) ? (int)($message["time"] / 1000) : 0;
+                    echo $time ? date("Y-m-d H:i", $time) : "—";
+                  ?>
+                </td>
+                <td>
+                  <button class="btn btn-ghost" type="button" data-delete-id="<?php echo htmlspecialchars((string)($message["id"] ?? "")); ?>">Delete</button>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </tbody>
+      </table>
+      <div class="status" data-guestbook-status></div>
+    </div>
   </div>
+
+  <script>
+    (() => {
+      const table = document.querySelector('[data-guestbook-table]');
+      if (!table) return;
+
+      const statusEl = document.querySelector('[data-guestbook-status]');
+      const countEl = document.querySelector('[data-guestbook-count]');
+      const adminKey = <?php echo json_encode($ADMIN_API_KEY); ?>;
+
+      table.addEventListener('click', async (event) => {
+        const btn = event.target.closest('[data-delete-id]');
+        if (!btn) return;
+
+        const id = btn.getAttribute('data-delete-id');
+        if (!id) return;
+
+        const confirmed = window.confirm('Delete this message?');
+        if (!confirmed) return;
+
+        btn.disabled = true;
+
+        try {
+          const res = await fetch('api/delete_message.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Admin-Key': adminKey,
+            },
+            body: JSON.stringify({ id }),
+          });
+
+          const data = await res.json();
+          if (!data.ok) {
+            throw new Error(data.error || 'Delete failed.');
+          }
+
+          const row = btn.closest('tr');
+          if (row) row.remove();
+
+          if (countEl) {
+            const next = Math.max(0, Number(countEl.textContent || '0') - 1);
+            countEl.textContent = String(next);
+          }
+
+          if (statusEl) {
+            statusEl.textContent = 'Message deleted.';
+            statusEl.classList.remove('is-error');
+            statusEl.classList.add('is-ok');
+          }
+        } catch (error) {
+          if (statusEl) {
+            statusEl.textContent = error?.message || 'Delete failed.';
+            statusEl.classList.remove('is-ok');
+            statusEl.classList.add('is-error');
+          }
+        } finally {
+          btn.disabled = false;
+          setTimeout(() => {
+            if (statusEl) {
+              statusEl.textContent = '';
+              statusEl.classList.remove('is-ok', 'is-error');
+            }
+          }, 2200);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

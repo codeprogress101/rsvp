@@ -85,6 +85,76 @@
 </section>
 
 
+<!-- MESSAGE FOR THE COUPLE / GUESTBOOK SECTION -->
+<section class="guestbook" id="guestbook" aria-label="Message for the couple">
+  <!-- FORM PANEL -->
+  <aside class="panel" id="panel" aria-label="Message form">
+    <div class="panel__header">
+      <div class="panel__headText">
+        <h2 class="panel__title">Message for the Couple</h2>
+        <p class="panel__subtitle">Leave a note. Sign it or stay anonymous.</p>
+      </div>
+
+      <!-- Desktop only (hidden on mobile) -->
+      <button class="panel__collapseBtn" id="panelCollapseBtn" type="button" aria-expanded="true">
+        Collapse
+      </button>
+    </div>
+
+    <form id="messageForm" class="form">
+      <label class="form__label" for="name">Name (optional)</label>
+      <input id="name" name="name" class="form__input" type="text" placeholder="e.g., Alex" maxlength="40" />
+
+      <label class="form__label" for="message">Your message</label>
+      <textarea id="message" name="message" class="form__textarea" rows="5"
+        placeholder="Write something heartfelt..." maxlength="220" required></textarea>
+
+      <div class="form__row">
+        <label class="toggle">
+          <input id="anonymous" type="checkbox" />
+          <span>Post anonymously</span>
+        </label>
+        <span class="charcount"><span id="count">0</span>/220</span>
+      </div>
+
+      <!-- Honeypot -->
+      <input type="text" name="website" id="website" class="hp" autocomplete="off" tabindex="-1" />
+
+      <div class="form__actions">
+        <button class="btn btn--primary" type="submit" id="submitBtn">Post</button>
+        <button class="btn btn--ghost" type="button" id="refreshBtn">Refresh</button>
+      </div>
+
+      <p class="form__hint" id="statusText"></p>
+    </form>
+
+    <!-- Mobile collapse bar button -->
+    <button class="panel__mobileHandle" type="button" id="mobileHandle" aria-expanded="true">
+      Hide form
+    </button>
+
+    <!-- Desktop “peek tab” -->
+    <button class="panel__peekTab" type="button" id="peekTab" aria-label="Expand message form">
+      Message
+    </button>
+  </aside>
+
+  <!-- CORKBOARD -->
+  <main class="board" id="board" aria-label="Corkboard notes">
+    <div class="board__topbar" id="boardTopbar">
+      <div class="board__title">Polaroid Wall</div>
+      <div class="board__meta">Notes: <span id="noteCount">0</span></div>
+    </div>
+
+    <div id="notes" class="notes" aria-live="polite"></div>
+
+    <div class="pager" id="pager" aria-label="Pagination">
+      <button class="btn btn--ghost btn--small" id="prevBtn" type="button">Prev</button>
+      <span class="pager__text">Page <span id="pageNum">1</span> of <span id="pageTotal">1</span></span>
+      <button class="btn btn--ghost btn--small" id="nextBtn" type="button">Next</button>
+    </div>
+  </main>
+</section>
 
 <!-- SAVE THE DATE SECTION -->
 <section id="details" class="details" aria-label="Save the date">
@@ -251,37 +321,7 @@ $rsvp_msg = $_GET['msg'] ?? '';
 
 
   </main>
-  <script>
-  (function () {
-    const rsvpSection = document.querySelector('.rsvp');
-    if (!rsvpSection) return;
-
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          rsvpSection.classList.add('is-visible');
-          io.disconnect();
-        }
-      });
-    }, { threshold: 0.35 });
-
-    io.observe(rsvpSection);
-  })();
-
-  (function () {
-    const form = document.querySelector('.rsvp-form');
-    if (!form) return;
-
-    form.addEventListener('submit', function () {
-      const btn = form.querySelector('button[type="submit"]');
-      if (!btn) return;
-
-      btn.disabled = true;
-      btn.classList.add('is-loading');
-      btn.textContent = 'Sending...';
-    });
-  })();
-</script>
+  <script src="script.js"></script>
 
 </body>
 </html>

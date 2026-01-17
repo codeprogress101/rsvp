@@ -1,5 +1,13 @@
 [
     {
+        "id": "faae5ae8c64e8350",
+        "name": "Kissy",
+        "anonymous": false,
+        "message": "Be Happy!",
+        "time": 1768678070638,
+        "rot": "2.4deg"
+    },
+    {
         "id": "0967495183965824",
         "name": "dasdasdas",
         "anonymous": false,
@@ -223,14 +231,5 @@
         "time": 1768666663168,
         "color": "mint",
         "rot": "0.2deg"
-    },
-    {
-        "id": "0f8f0a8402790f64",
-        "name": "",
-        "anonymous": false,
-        "message": "dada",
-        "time": 1768666652231,
-        "color": "pink",
-        "rot": "-2.9deg"
     }
 ]
