@@ -27,7 +27,7 @@
       <!-- If your hero background image already includes the black border/mat,
            you can keep it as-is. If not, the CSS adds a safe frame feel. -->
 
-           
+
 <div class="hero__clouds" aria-hidden="true">
         <div class="hero__cloud hero__cloud--one">
           <img src="assets/cloud1.png" alt="" aria-hidden="true" />
@@ -39,6 +39,8 @@
           <img src="assets/cloud3.png" alt="" aria-hidden="true" />
         </div>
       </div>
+
+       <img src="assets/couple.png" class="hero__couple" alt="" aria-hidden="true">
 
       <div class="hero__inner">
         <div class="hero__content">
@@ -89,7 +91,7 @@
   <div class="container">
     <header class="details__header">
       <p class="details__eyebrow">SAVE THE DATE</p>
-      <h2 class="details__title">June 14, 2026</h2>
+      <h2 class="details__title">June 18, 2026</h2>
       <p class="details__lead">
         More details will be posted soon.
       </p>
@@ -99,7 +101,7 @@
       <!-- Date card -->
       <article class="card card--highlight">
         <h3 class="card__title">Wedding Date</h3>
-        <p class="card__big">June 14, 2026</p>
+        <p class="card__big">June 18, 2026</p>
         <p class="card__sub">Please mark your calendar.</p>
       </article>
 
@@ -146,19 +148,19 @@
         <img src="assets/gallery/image 1.jpg" alt="Couple photo 1" loading="lazy">
       </figure>
       <figure class="gallery__item">
-        <img src="assets/gallery/image 3.JPG" alt="Couple photo 2" loading="lazy">
+        <img src="assets/gallery/image 2.JPG" alt="Couple photo 2" loading="lazy">
       </figure>
       <figure class="gallery__item">
-        <img src="assets/gallery/image 2.jpg" alt="Couple photo 3" loading="lazy">
+        <img src="assets/gallery/image 3.jpg" alt="Couple photo 3" loading="lazy">
       </figure>
       <figure class="gallery__item">
-        <img src="assets/gallery/image 2.jpg" alt="Couple photo 4" loading="lazy">
+        <img src="assets/gallery/image 4.jpg" alt="Couple photo 4" loading="lazy">
       </figure>
       <figure class="gallery__item">
-        <img src="assets/gallery/image 1.jpg" alt="Couple photo 5" loading="lazy">
+        <img src="assets/gallery/image 5.jpg" alt="Couple photo 5" loading="lazy">
       </figure>
       <figure class="gallery__item">
-        <img src="assets/gallery/image 3.jpg" alt="Couple photo 6" loading="lazy">
+        <img src="assets/gallery/image 6.jpg" alt="Couple photo 6" loading="lazy">
 
     </figure>
     </div>

@@ -9,7 +9,7 @@
 
 :root {
   /* HERO BACKGROUNDS (update filenames as needed) */
-  --hero-bg-desktop: url("assets/hero-web.png");
+  --hero-bg-desktop: url("assets/hero.png");
   --hero-bg-mobile: url("assets/hero-mobile.jpg"); /* placeholder */
 
   --ink: #3f3f35;               /* muted dark olive/gray */
@@ -26,7 +26,8 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; overscroll-behavior-y: none;}
+
 
 body {
   background: var(--page-bg);
@@ -99,16 +100,22 @@ body {
   background-position: left center;
   background-repeat: no-repeat;
   position: relative;
-  overflow: hidden;
+  overflow: clip;
   isolation: isolate;
 
-  height: 100vh;
-  min-height: 100vh;
+  height: 100vh;        /* fallback */
+  min-height: 100vh;    /* fallback */
+
+  height: 100svh;       /* stable viewport height (best for scroll up/down on mobile) */
+  min-height: 100svh;
 
   padding: clamp(14px, 3.5vw, 34px);
 
   background-color: #ddd;
   border: 12px solid var(--frame);
+}
+@supports not (overflow: clip){
+  .hero{ overflow: hidden; }
 }
 
 .hero__clouds {
@@ -116,11 +123,14 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 1;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .hero__cloud {
   position: absolute;
-  width: clamp(140px, 22vw, 320px);
+  width: clamp(180px, 26vw, 420px);
+  
   opacity: 0.9;
   animation: cloud-drift 38s ease-in-out infinite;
   pointer-events: none;
@@ -135,24 +145,24 @@ body {
 }
 
 .hero__cloud--one {
-  top: 10%;
-  left: -3%;
-  width: clamp(150px, 24vw, 340px);
-  animation-duration: 42s;
+  top: 0%;
+  left: -6%;
+  width: clamp(220px, 30vw, 480px);
+  animation-duration: 44s;
 }
 
 .hero__cloud--two {
-  top: 45%;
-  left: 8%;
-  width: clamp(130px, 20vw, 280px);
-  animation-duration: 36s;
+   top: 20%;
+  left: 25%;
+  width: clamp(200px, 28vw, 420px);
+  animation-duration: 38s;
 }
 
 .hero__cloud--three {
-  top: 8%;
-  right: 6%;
-  width: clamp(120px, 18vw, 260px);
-  animation-duration: 48s;
+   top: 8%;
+  right: 2%;
+  width: clamp(210px, 26vw, 460px);
+  animation-duration: 46s;
 }
 
 .hero__cloud--one img { animation-duration: 7s; }
@@ -164,7 +174,18 @@ body {
   display: flex;
   align-items: center;
   position: relative;
+  z-index: 3;
+}
+
+.hero__couple {
+  position: absolute;
+  bottom: 0%;
+  left: -2%;
+  width: clamp(220px, 28vw, 420px);
+  max-width: 48%;
+  height: auto;
   z-index: 2;
+  pointer-events: none;
 }
 
 /* content positioned center-right */
@@ -479,10 +500,13 @@ body {
 ========================================= */
 .story {
   background: #ffffff;
-
+  background-image: url("assets/story-bg.png");
   min-height: 100vh;
   height: 100vh;
-
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom center;
+  
   display: flex;
   align-items: center;
 
@@ -565,7 +589,7 @@ body {
 
   .story__text { text-align: center; }
 
-  .story__quote { text-align: left; }
+  .story__quote { text-align: center; }
 
   .story__actions { justify-content: center; }
 
@@ -576,7 +600,8 @@ body {
 }
 
 @media (max-width: 420px) {
-  .story__quote { padding: 18px 16px; }
+  .story__quote { padding: 18px 16px; text-align: center; }
+  
 }
 
 /* =========================================
@@ -661,6 +686,7 @@ body {
   height: 100%;
   display: block;
   object-fit: cover;
+  object-position: top center;
   transition: transform 0.18s ease, opacity 0.18s ease;
 }
 
@@ -722,29 +748,40 @@ body {
 @media (max-width: 768px) {
   .hero {
     background-image: var(--hero-bg-mobile);
-    background-position: center;
+    background-position: left bottom center;
 
     height: 100vh;
     min-height: 100vh;
 
     border-width: 10px;
     padding: 14px;
+
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   .hero__cloud--one {
     top: 6%;
     left: -6%;
-    width: clamp(110px, 28vw, 180px);
+    width: clamp(160px, 36vw, 240px);
   }
 
   .hero__cloud--two {
-    top: 58%;
-    left: 4%;
-    width: clamp(100px, 24vw, 160px);
+   top: 30%;
+    left: 12%;
+    width: clamp(150px, 34vw, 220px);
   }
 
   .hero__cloud--three {
-    display: none;
+    top: 10%;
+    left: 70%;
+    width: clamp(150px, 34vw, 220px);
+  }
+  .hero__couple {
+    bottom: 0%;
+    left: -5%;
+    width: clamp(170px, 48vw, 260px);
+    max-width: 45%;
   }
 
   .hero__content {
