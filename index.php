@@ -27,6 +27,19 @@
       <!-- If your hero background image already includes the black border/mat,
            you can keep it as-is. If not, the CSS adds a safe frame feel. -->
 
+           
+<div class="hero__clouds" aria-hidden="true">
+        <div class="hero__cloud hero__cloud--one">
+          <img src="assets/cloud1.png" alt="" aria-hidden="true" />
+        </div>
+        <div class="hero__cloud hero__cloud--two">
+          <img src="assets/cloud2.png" alt="" aria-hidden="true" />
+        </div>
+        <div class="hero__cloud hero__cloud--three">
+          <img src="assets/cloud3.png" alt="" aria-hidden="true" />
+        </div>
+      </div>
+
       <div class="hero__inner">
         <div class="hero__content">
           <h1 class="hero__title">KEEM &amp; KATE</h1>
@@ -133,7 +146,7 @@
         <img src="assets/gallery/image 1.jpg" alt="Couple photo 1" loading="lazy">
       </figure>
       <figure class="gallery__item">
-        <img src="assets/gallery/image 3.jpg" alt="Couple photo 2" loading="lazy">
+        <img src="assets/gallery/image 3.JPG" alt="Couple photo 2" loading="lazy">
       </figure>
       <figure class="gallery__item">
         <img src="assets/gallery/image 2.jpg" alt="Couple photo 3" loading="lazy">
