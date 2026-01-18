@@ -1,34 +1,4 @@
 (() => {
-  const rsvpSection = document.querySelector('.rsvp');
-  if (!rsvpSection) return;
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        rsvpSection.classList.add('is-visible');
-        io.disconnect();
-      }
-    });
-  }, { threshold: 0.35 });
-
-  io.observe(rsvpSection);
-})();
-
-(() => {
-  const form = document.querySelector('.rsvp-form');
-  if (!form) return;
-
-  form.addEventListener('submit', () => {
-    const btn = form.querySelector('button[type="submit"]');
-    if (!btn) return;
-
-    btn.disabled = true;
-    btn.classList.add('is-loading');
-    btn.textContent = 'Sending...';
-  });
-})();
-
-(() => {
   const guestbookEl = document.getElementById('guestbook');
   if (!guestbookEl) return;
 
@@ -59,7 +29,10 @@
   const anonInput = document.getElementById('anonymous');
   const hpInput = document.getElementById('website');
 
-  if (!form || !notesEl || !countEl || !noteCountEl || !statusText || !submitBtn || !refreshBtn || !prevBtn || !nextBtn || !pageNumEl || !pageTotalEl || !panelCollapseBtn || !peekTab || !mobileHandle || !msgInput || !nameInput || !anonInput || !hpInput || !boardEl || !topbarEl || !pagerEl) {
+  if (!form || !notesEl || !countEl || !noteCountEl || !statusText || !submitBtn || !refreshBtn ||
+      !prevBtn || !nextBtn || !pageNumEl || !pageTotalEl || !panelCollapseBtn || !peekTab ||
+      !mobileHandle || !msgInput || !nameInput || !anonInput || !hpInput ||
+      !boardEl || !topbarEl || !pagerEl) {
     return;
   }
 
@@ -71,6 +44,11 @@
   let totalPages = 1;
 
   const mqMobile = window.matchMedia('(max-width: 900px)');
+
+  // -------- NEW: stable limit cache --------
+  let cachedLimit = null;
+  let cachedLayoutKey = '';
+  // ----------------------------------------
 
   function formatTime(ts) {
     const d = new Date(ts);
@@ -112,7 +90,6 @@
 
     card.appendChild(createTape('tape--bl'));
     card.appendChild(createTape('tape--br'));
-
     card.appendChild(msg);
     card.appendChild(footer);
 
@@ -124,38 +101,44 @@
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  function getCardHeight() {
-    let card = notesEl.querySelector('.polaroid');
-    let tempCard = null;
-
-    if (!card) {
-      tempCard = polaroidCard({
-        name: '',
-        anonymous: true,
-        message: 'Sample message',
-        time: Date.now(),
-        rot: '0deg',
-      });
-      tempCard.style.visibility = 'hidden';
-      tempCard.style.pointerEvents = 'none';
-      notesEl.appendChild(tempCard);
-      card = tempCard;
-    }
-
-    const height = card.getBoundingClientRect().height;
-
-    if (tempCard) {
-      tempCard.remove();
-    }
-
-    return height || 1;
-  }
-
   function getGridCols() {
     const style = window.getComputedStyle(notesEl);
     const cols = style.gridTemplateColumns.split(' ').filter(Boolean).length;
     return Math.max(1, cols || 1);
   }
+
+  // -------- UPDATED: always measure a temp card (stable), sized like a real column --------
+  function getCardHeight() {
+    const cols = getGridCols();
+
+    const notesStyle = window.getComputedStyle(notesEl);
+    const colGap = parsePx(notesStyle.columnGap || notesStyle.gap);
+    const totalGap = colGap * (cols - 1);
+    const colWidth = Math.max(140, (notesEl.clientWidth - totalGap) / cols);
+
+    const tempCard = polaroidCard({
+      name: '',
+      anonymous: true,
+      message: 'Sample message\nSample message',
+      time: Date.now(),
+      rot: '0deg',
+    });
+
+    tempCard.style.position = 'absolute';
+    tempCard.style.left = '-9999px';
+    tempCard.style.top = '0';
+    tempCard.style.width = `${colWidth}px`;
+    tempCard.style.transform = 'none';
+    tempCard.style.visibility = 'hidden';
+    tempCard.style.pointerEvents = 'none';
+
+    notesEl.appendChild(tempCard);
+    const height = tempCard.getBoundingClientRect().height || 1;
+    tempCard.remove();
+
+    return height;
+  }
+  // -----------------------------------------------------------------------
 
   function computeLimit() {
     const cols = getGridCols();
@@ -180,8 +163,36 @@
     const cardHeight = getCardHeight();
     const rows = Math.max(1, Math.floor(availableHeight / (cardHeight + notesGap)));
 
-    return Math.max(1, rows * cols);
+    const limit = rows * cols;
+    return Math.max(6, Math.min(30, limit));
   }
+
+  // -------- NEW: stable limit per layout --------
+  function getLayoutKey() {
+    const cols = getGridCols();
+    const boardH = Math.round(boardEl.getBoundingClientRect().height);
+
+    const collapsedDesktop = guestbookEl.classList.contains('is-panel-collapsed') ? 1 : 0;
+    const collapsedMobile = guestbookEl.classList.contains('is-mobile-form-collapsed') ? 1 : 0;
+    const isMobile = mqMobile.matches ? 1 : 0;
+
+    return `${cols}|${boardH}|${collapsedDesktop}|${collapsedMobile}|${isMobile}`;
+  }
+
+  function getStableLimit() {
+    const key = getLayoutKey();
+    if (key !== cachedLayoutKey || !cachedLimit) {
+      cachedLayoutKey = key;
+      cachedLimit = computeLimit();
+    }
+    return cachedLimit;
+  }
+
+  function invalidateLimit() {
+    cachedLimit = null;
+    cachedLayoutKey = '';
+  }
+  // --------------------------------------------
 
   function setPagingUI() {
     pageNumEl.textContent = String(page);
@@ -195,7 +206,7 @@
   async function loadNotes() {
     statusText.textContent = 'Loading notes…';
 
-    const limit = computeLimit();
+    const limit = getStableLimit();
 
     try {
       const url = new URL(API_GET, window.location.href);
@@ -303,6 +314,7 @@
     panelCollapseBtn.setAttribute('aria-expanded', nextCollapsed ? 'false' : 'true');
 
     page = 1;
+    invalidateLimit();
     requestAnimationFrame(() => requestAnimationFrame(loadNotes));
   }
 
@@ -315,11 +327,13 @@
     mobileHandle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
 
     page = 1;
+    invalidateLimit();
     requestAnimationFrame(() => requestAnimationFrame(loadNotes));
   });
 
   mqMobile.addEventListener('change', () => {
     page = 1;
+    invalidateLimit();
     requestAnimationFrame(() => requestAnimationFrame(loadNotes));
   });
 
@@ -328,6 +342,7 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       page = 1;
+      invalidateLimit();
       loadNotes();
     }, 120);
   });

@@ -1,5 +1,13 @@
 [
     {
+        "id": "409ea25fece844ba",
+        "name": "Love lang",
+        "anonymous": false,
+        "message": "Love lang",
+        "time": 1768714844450,
+        "rot": "-2.5deg"
+    },
+    {
         "id": "faae5ae8c64e8350",
         "name": "Kissy",
         "anonymous": false,
@@ -15,24 +23,6 @@
         "time": 1768667225569,
         "color": "yellow",
         "rot": "0.1deg"
-    },
-    {
-        "id": "98e619c8a9b2d855",
-        "name": "",
-        "anonymous": false,
-        "message": "congratulationsacongratulationsacongratulationsacongratulationsa",
-        "time": 1768666853330,
-        "color": "blue",
-        "rot": "1.5deg"
-    },
-    {
-        "id": "956ae38b5c3ed7b0",
-        "name": "",
-        "anonymous": false,
-        "message": "congratulationsacongratulationsacongratulationsacongratulationsacongratulationsacongratulationsacongratulationsa",
-        "time": 1768666846929,
-        "color": "pink",
-        "rot": "-3.3deg"
     },
     {
         "id": "072243d21bb01408",

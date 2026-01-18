@@ -39,8 +39,8 @@ if (!$is_admin) :
   <title>Admin Login</title>
   <style>
     :root{
-      --hero-desktop: url("assets/hero-web.png");
-      --hero-mobile:  url("assets/hero-mobile.jpg");
+      --hero-desktop: url("assets/hero.webp");
+      --hero-mobile:  url("assets/hero-mobile.webp");
     }
 
     *{ box-sizing: border-box; }

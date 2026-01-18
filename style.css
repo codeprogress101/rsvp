@@ -9,8 +9,8 @@
 
 :root {
   /* HERO BACKGROUNDS (update filenames as needed) */
-  --hero-bg-desktop: url("assets/hero.png");
-  --hero-bg-mobile: url("assets/hero-mobile.jpg"); /* placeholder */
+  --hero-bg-desktop: url("assets/hero.webp");
+  --hero-bg-mobile: url("assets/hero-mobile.webp"); /* placeholder */
 
   --ink: #3f3f35;               /* muted dark olive/gray */
   --ink-soft: rgba(63, 63, 53, 0.75);
@@ -33,6 +33,11 @@ body {
   background: var(--page-bg);
   font-family: Arial, Helvetica, sans-serif;
   color: #222;
+  scroll-snap-type: y mandatory;
+}
+section{
+  scroll-snap-align: start;
+  min-height: 100vh;
 }
 
 /* ===== UTIL ===== */
@@ -306,6 +311,62 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ================= HERO – TABLET (iPad ~1024px) ================= */
+@media (min-width: 770px) and (max-width: 1100px){
+
+  .hero{
+    background-image: url("assets/hero-desktop.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    min-height: 90vh;
+    padding-top: 6vh;
+    padding-bottom: 6vh;
+  }
+
+  /* Content width adjustment */
+  .hero__content{
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* Couple image – make it larger */
+  .hero__couple,
+  .hero__image{
+    width: 420px;
+    max-width: 42vw;
+  }
+
+  .hero__couple img,
+  .hero__image img{
+    width: 100%;
+    height: auto;
+  }
+
+  /* Names / title */
+  .hero__title{
+    font-size: clamp(44px, 5vw, 56px);
+    letter-spacing: 0.12em;
+  }
+
+  /* Subtitle text */
+  .hero__subtitle{
+    font-size: 16px;
+    margin-top: 8px;
+  }
+
+  /* CTA button */
+  .hero__cta,
+  .hero .btn{
+    margin-top: 22px;
+    padding: 12px 26px;
+    font-size: 13px;
+  }
+}
+
+
 
 /* =========================================
    SAVE THE DATE / DETAILS (100vh)
@@ -830,6 +891,13 @@ body {
   padding: 0 18px;
 }
 
+.rsvp__note{
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0,0,0,0.65);
+}
+
 .rsvp__header {
   text-align: center;
   margin: 0 auto 18px;
@@ -1242,7 +1310,6 @@ a:hover {
   opacity: 0.9;
 }
 
-
 /* =========================================
    Guestbook / Message for the Couple (100vh)
 ========================================= */
@@ -1264,18 +1331,27 @@ a:hover {
   background: rgba(255,255,255,0.82);
   border-right: 1px solid rgba(0,0,0,0.08);
   padding: clamp(14px, 2vw, 18px);
+
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   min-width: 0;
   position: relative;
+  align-items: start;
+
   transition: padding 320ms ease, height 320ms ease, max-height 320ms ease;
 }
+
+/* lock panel parts into rows */
+.guestbook .panel__header{ grid-row: 1; }
+.guestbook .form{ grid-row: 2; }
+.guestbook .panel__mobileHandle{ grid-row: 3; }
 
 .guestbook .panel__header{
   display:flex;
   align-items:flex-start;
   justify-content: space-between;
   gap: 12px;
+  margin-top: 16px;
 }
 
 .guestbook .panel__title{
@@ -1327,21 +1403,33 @@ a:hover {
   box-shadow: 0 10px 22px rgba(0,0,0,0.12);
 }
 
+/* DESKTOP: form scrolls */
 .guestbook .form{
-  overflow: auto;
-  padding-right: 4px;
-  display:grid;
-  gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  padding-right: 6px;
+  padding-bottom: 10px;
+
+  display: grid;
+  gap: 12px;
+  grid-auto-rows: auto;
+  align-content: start;
 
   transition: opacity 220ms ease, transform 220ms ease;
 }
 
+.guestbook .form__group{ display: grid; gap: 4px; }
+
 .guestbook .form__label{
+  margin: 0;
+  display: block;
+  line-height: 1.1;
   font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(0,0,0,0.65);
-  margin-top: 6px;
 }
 
 .guestbook .form__input,
@@ -1355,25 +1443,40 @@ a:hover {
   font-size: 15px;
 }
 
-.guestbook .form__textarea{ resize: vertical; min-height: 120px; max-height: 260px; }
-
-.guestbook .form__row{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 6px;
+.guestbook .form__textarea{
+  resize: vertical;
+  min-height: 120px;
+  max-height: 260px;
 }
 
-.guestbook .toggle{ display:inline-flex; align-items:center; gap: 10px; user-select:none; font-size: 14px; color: rgba(0,0,0,0.75); }
+.guestbook .form__row{ margin-top: 0; }
+
+.guestbook .toggle{
+  display:inline-flex;
+  align-items:center;
+  gap: 10px;
+  user-select:none;
+  font-size: 14px;
+  color: rgba(0,0,0,0.75);
+}
 .guestbook .toggle input{ transform: scale(1.1); accent-color: rgba(63,63,53,0.95); }
 .guestbook .charcount{ font-size: 12px; letter-spacing: 0.08em; color: rgba(0,0,0,0.55); }
 
-.guestbook .form__actions{ display:flex; gap:10px; flex-wrap: wrap; margin-top: 10px; }
+.guestbook .form__actions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
 
 .guestbook .btn--small{ padding: 9px 12px; font-size: 11px; letter-spacing: 0.08em; }
 
-.guestbook .form__hint{ margin: 6px 0 0; font-size: 13px; color: rgba(0,0,0,0.6); line-height: 1.4; }
+.guestbook .form__hint{
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: rgba(0,0,0,0.6);
+  line-height: 1.4;
+}
 
 .guestbook .hp{
   position:absolute;
@@ -1384,6 +1487,7 @@ a:hover {
   pointer-events:none;
 }
 
+/* mobile handle hidden by default (desktop) */
 .guestbook .panel__mobileHandle{ display:none; }
 
 /* ================= BOARD ================= */
@@ -1394,8 +1498,9 @@ a:hover {
   padding: clamp(14px, 2vw, 22px);
 
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 12px;
+  min-width: 0;
 }
 
 .guestbook .board::before{
@@ -1422,6 +1527,7 @@ a:hover {
   background: rgba(255,255,255,0.20);
   border: 1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(3px);
+  min-width: 0;
 }
 
 .guestbook .board__title{
@@ -1437,24 +1543,31 @@ a:hover {
   letter-spacing: 0.08em;
 }
 
+/* ✅ no horizontal scrollbar */
 .guestbook .notes{
   position: relative;
   z-index: 2;
   min-height: 0;
-  height: 100%;
-  overflow: hidden;
+  min-width: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 
-  grid-auto-rows: 1fr;
-  align-content: stretch;
+  grid-auto-rows: auto;
+  align-content: start;
+
+  padding-bottom: 6px;
 }
 
 .guestbook .polaroid{
   position: relative;
   border-radius: 14px;
+  max-width: 100%;
 
   background:
     radial-gradient(circle at 20% 20%, rgba(255,255,255,0.75), transparent 55%),
@@ -1474,7 +1587,6 @@ a:hover {
 
   display: flex;
   flex-direction: column;
-  height: 100%;
   min-height: 130px;
 
   transition: transform .18s ease, box-shadow .18s ease;
@@ -1496,11 +1608,6 @@ a:hover {
     linear-gradient(135deg, #eef6ff, #dde8f2);
 }
 
-.guestbook .polaroid:hover{
-  transform: rotate(var(--rot, 0deg)) translateY(-2px);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.6);
-}
-
 .guestbook .polaroid::before,
 .guestbook .polaroid::after{
   content:"";
@@ -1518,21 +1625,6 @@ a:hover {
 .guestbook .polaroid::before{ top: -6px; left: -10px; transform: rotate(-12deg); }
 .guestbook .polaroid::after { top: -6px; right:-10px; transform: rotate(10deg); }
 
-.guestbook .tape{
-  position:absolute;
-  width: 64px;
-  height: 22px;
-  z-index: 2;
-  background:
-    linear-gradient(to bottom, rgba(255,255,255,0.48), rgba(255,255,255,0.30)),
-    repeating-linear-gradient(90deg, rgba(0,0,0,0.03) 0 2px, transparent 2px 6px);
-  border: 1px solid rgba(0,0,0,0.10);
-  box-shadow: 0 10px 18px rgba(0,0,0,0.16);
-  backdrop-filter: blur(1px);
-}
-.guestbook .tape--bl{ left: -10px; bottom: -8px; transform: rotate(10deg); }
-.guestbook .tape--br{ right:-10px; bottom:-8px; transform: rotate(-12deg); }
-
 .guestbook .polaroid__message{
   margin: 4px 2px 10px;
   line-height: 1.55;
@@ -1544,20 +1636,12 @@ a:hover {
   word-break: break-word;
   hyphens: auto;
 
-  min-height: 0;
-  overflow: auto;
-  padding-right: 4px;
-
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
   flex: 1;
-}
-
-.guestbook.is-panel-collapsed .notes{
-  gap: 12px;
 }
 
 .guestbook .polaroid__footer{
@@ -1589,12 +1673,52 @@ a:hover {
   border: 1px solid rgba(255,255,255,0.14);
   backdrop-filter: blur(4px);
 }
+
+#prevBtn, #nextBtn{
+  color: #fff;
+  border: 1px solid #fff;
+}
+
 .guestbook .pager__text{
   color: rgba(255,255,255,0.92);
   font-size: 13px;
   letter-spacing: 0.08em;
 }
 
+/* Guestbook action buttons */
+.guestbook #submitBtn,
+.guestbook #refreshBtn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px 14px;
+  height: 40px;
+
+  border-radius: 40px;
+  border: 1px solid rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.35);
+
+  cursor: pointer;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* Primary (POST) */
+.guestbook #submitBtn{
+  background: #3f3f35;
+  color: #fff;
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* Ghost (REFRESH) */
+.guestbook #refreshBtn{
+  color: rgba(0,0,0,0.75);
+}
+
+/* Desktop panel collapse */
 .guestbook.is-panel-collapsed{
   grid-template-columns: 64px 1fr;
 }
@@ -1615,88 +1739,213 @@ a:hover {
   display: inline-flex;
 }
 
+/* ================= MOBILE ================= */
 @media (max-width: 900px){
   .guestbook{
     display: flex;
     flex-direction: column;
+    height: 100dvh;
+  }
+
+  /* ✅ CRITICAL: ensure mobile NEVER behaves like desktop grid */
+  .guestbook,
+  .guestbook.is-panel-collapsed{
+    display: flex !important;
+    grid-template-columns: unset !important;
   }
 
   .guestbook .board{
-    flex: 1;
-    height: auto;
+    flex: 1 1 auto;
     order: 1;
+    min-height: 0;
   }
 
+  /* panel is the only scroller on iOS */
   .guestbook .panel{
+    order: 2;
     border-right: 0;
     border-top: 1px solid rgba(0,0,0,0.08);
-    height: 34svh;
-    max-height: 34svh;
-    order: 2;
+
+    padding: 10px;
+    height: clamp(320px, 46svh, 560px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    grid-template-rows: auto auto auto;
   }
 
-  .guestbook .panel__collapseBtn{ display:none; }
+  /* hide desktop collapse button on mobile */
+  .guestbook .panel__collapseBtn{ display: none; }
+  .guestbook .panel__peekTab{ display:none !important; }
+
+  /* header space for top-right button */
+  .guestbook .panel__header{
+    position: relative;
+    padding-right: 120px; /* space for the button */
+  }
+
+  /* form should NOT scroll on mobile */
+  .guestbook .form{
+    overflow: visible;
+    padding-right: 0;
+    gap: 8px;
+    padding-bottom: 8px;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+
+  .guestbook .form__group{ gap: 3px; }
+
+  .guestbook .form__input,
+  .guestbook .form__textarea{
+    padding: 9px 12px;
+    border-radius: 12px;
+  }
+
+  .guestbook .form__textarea{
+    min-height: 80px;
+    max-height: 200px;
+  }
+
+  .guestbook .form__row{ margin-top: 2px; }
+
+  /* buttons side-by-side */
+  .guestbook .form__actions{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .guestbook #submitBtn,
+  .guestbook #refreshBtn{
+    width: 100%;
+    height: 38px;
+    padding: 9px 2px;
+  }
+
+  /* hide form button in header (top-right) */
+  .guestbook .panel__mobileHandle{
+    display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+  top: 6px;
+  right: 8px;
+
+  width: auto;
+  margin: 0;                 /* remove bottom spacing behavior */
+  padding: 8px 10px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.14);
+  background: rgba(255,255,255,0.85);
+
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  font-size: 10px;
+  line-height: 1;
+  white-space: nowrap;
+
+  padding: 6px 8px;     /* was 8px 10px */
+  font-size: 8px;       /* was 10px */
+  letter-spacing: 0.08em;
+
+  z-index: 5;          
+  }
+
+  /* collapse DOWN */
+  .guestbook.is-mobile-form-collapsed .form{
+    display: none;
+  }
+  .guestbook.is-mobile-form-collapsed .panel{
+    height: 96px;
+    overflow: hidden;
+  }
+
+  /* one-line title */
+  .guestbook .panel__title{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 17px;
+    letter-spacing: 0.05em;
+  }
 
   .guestbook .panel__mobileHandle{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width: 100%;
-    margin-top: 10px;
-
-    border-radius: 999px;
-    padding: 10px 12px;
-    border: 1px solid rgba(0,0,0,0.18);
-    background: rgba(255,255,255,0.35);
-    cursor: pointer;
-
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-size: 11px;
-  }
-
-  .guestbook .panel__peekTab{ display:none !important; }
+  grid-row: 1; /* irrelevant when absolute, but prevents layout quirks */
+}
 
   .guestbook .notes{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 720px) and (max-width: 900px){
-  .guestbook .notes{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-@media (min-width: 840px) and (max-width: 900px){
-  .guestbook .notes{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
+@media (max-width: 390px){
 
-@media (max-width: 900px){
-  .guestbook.is-mobile-form-collapsed .panel{
-    height: 64px;
-    max-height: 64px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
+  /* shrink header spacing so content below doesn't get squeezed */
+  .guestbook .panel__header{
+    padding-right: 80px;
   }
 
-  .guestbook.is-mobile-form-collapsed .panel__header,
-  .guestbook.is-mobile-form-collapsed .form{
-    opacity: 0;
-    transform: translateY(6px);
-    pointer-events: none;
-    visibility: hidden;
-    height: 0;
-  }
+  .guestbook .panel__title{ font-size: 15px; }
+  .guestbook .panel__subtitle{ font-size: 13px; }
+  .guestbook .panel__mobileHandle{ font-size: 8px; padding: 6px 7px; }
 
-  .guestbook.is-mobile-form-collapsed .panel__mobileHandle{
-    margin: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .guestbook .btn,
-  .guestbook .polaroid,
-  .guestbook,
+  /* ✅ hard anti-crop rules */
   .guestbook .panel,
-  .guestbook .form{ transition:none; }
+  .guestbook .form,
+  .guestbook .form__group,
+  .guestbook .form__actions{
+    min-width: 0;
+  }
+
+  .guestbook .form__input,
+  .guestbook .form__textarea{
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* buttons: keep them inside panel */
+  .guestbook #submitBtn,
+  .guestbook #refreshBtn{
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* if side-by-side is too tight on tiny screens, stack them */
+  .guestbook .form__actions{
+    grid-template-columns: 1fr; /* ✅ prevents clipping */
+  }
+
+    .guestbook .form__textarea{
+    min-height: 60px;
+    max-height: 200px;
+  }
+
+  .guestbook .form__row{ margin-top: 2px; }
+
+  /* buttons side-by-side */
+  .guestbook .form__actions{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 3px;
+  }
+
+  .guestbook #submitBtn,
+  .guestbook #refreshBtn{
+    width: 100%;
+    height: 38px;
+    padding: 6px 1px;
+  }
+
 }

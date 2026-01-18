@@ -101,13 +101,17 @@
       </button>
     </div>
 
-    <form id="messageForm" class="form">
+        <form id="messageForm" class="form">
+          <div class="form__group">
       <label class="form__label" for="name">Name (optional)</label>
       <input id="name" name="name" class="form__input" type="text" placeholder="e.g., Alex" maxlength="40" />
+    </div>
 
+    <div class="form__group">
       <label class="form__label" for="message">Your message</label>
-      <textarea id="message" name="message" class="form__textarea" rows="5"
+      <textarea id="message" name="message" class="form__textarea"
         placeholder="Write something heartfelt..." maxlength="220" required></textarea>
+    </div>
 
       <div class="form__row">
         <label class="toggle">
@@ -120,13 +124,15 @@
       <!-- Honeypot -->
       <input type="text" name="website" id="website" class="hp" autocomplete="off" tabindex="-1" />
 
-      <div class="form__actions">
+       <div class="form__actions">
         <button class="btn btn--primary" type="submit" id="submitBtn">Post</button>
         <button class="btn btn--ghost" type="button" id="refreshBtn">Refresh</button>
       </div>
 
       <p class="form__hint" id="statusText"></p>
     </form>
+
+   
 
     <!-- Mobile collapse bar button -->
     <button class="panel__mobileHandle" type="button" id="mobileHandle" aria-expanded="true">
@@ -243,12 +249,18 @@
 </section>
 
 <!-- RSVP SECTION (ENVELOPE STYLE) -->
-<section id="rsvp" class="rsvp" aria-label="RSVP">
+<section id="rsvp" class="rsvp is-visible" aria-label="RSVP">
   <div class="container rsvp__wrap">
     <header class="rsvp__header">
       <p class="rsvp__eyebrow">RSVP</p>
       <h2 class="rsvp__title">Kindly Respond</h2>
       <p class="rsvp__lead">Your response means a lot to us.</p>
+
+      <!-- +1 NOTE -->
+      <p class="rsvp__note">
+        Friendly reminder: dahil limited ang seats, the invitation is for named guests only.
+        Sana po ay maunawaan ninyo. Salamat! 🤍
+      </p>
     </header>
 
     <div class="envelope" role="group" aria-label="RSVP envelope">
@@ -276,10 +288,12 @@ $rsvp_msg = $_GET['msg'] ?? '';
     <a class="btn btn--ghost" href="index.php#rsvp">Submit another response</a>
   </div>
 <?php endif; ?>
+
         <form class="rsvp-form <?php echo $rsvp_success ? 'is-hidden' : ''; ?>"
-      action="submit.php" method="POST" autocomplete="on">
+              action="submit.php" method="POST" autocomplete="on">
+
           <div class="rsvp-form__row">
-            <label class="rsvp-form__label" for="guest_name">What is your name?</label>
+            <label class="rsvp-form__label" for="guest_name">What is your full name?</label>
             <input
               class="rsvp-form__input"
               type="text"
@@ -318,6 +332,7 @@ $rsvp_msg = $_GET['msg'] ?? '';
     </div>
   </div>
 </section>
+
 
 
   </main>
